@@ -6,158 +6,113 @@
     <title>Tiger Deals</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<!-- ══ DEPOSIT SHEET ══ -->
-<div id="deposit-sheet" class="bottom-sheet">
-    <div class="sheet-handle"></div>
-    <div class="sheet-body">
-        <h2 class="sheet-title">Add Funds</h2>
-        <p class="sheet-sub">Enter how much you want to deposit</p>
+<div class="blob b1"></div>
+<div class="blob b2"></div>
+<div class="blob b3"></div>
 
-        <div class="amount-pills">
+<!-- DEPOSIT SHEET -->
+<div id="deposit-sheet" class="sheet">
+    <div class="sheet-pill"></div>
+    <div class="sheet-inner">
+        <h2 class="sh-title">Add Funds</h2>
+        <p class="sh-sub">Pay via UPI and send screenshot to bot</p>
+        <div class="pills">
             <button class="pill" data-amount="50">₹50</button>
             <button class="pill" data-amount="100">₹100</button>
             <button class="pill" data-amount="200">₹200</button>
             <button class="pill" data-amount="500">₹500</button>
         </div>
-
-        <div class="input-wrap">
-            <span class="input-prefix">₹</span>
-            <input type="number" id="deposit-amount" placeholder="Enter amount" min="10" max="10000">
+        <div class="field">
+            <span class="f-prefix">₹</span>
+            <input type="number" id="dep-amount" placeholder="Enter amount" min="10">
         </div>
-
-        <div class="upi-box">
-            <span class="upi-label">Pay to UPI ID</span>
+        <div class="upi-card">
+            <span class="upi-lbl">UPI ID</span>
             <div class="upi-row">
-                <span id="upi-id-text" class="upi-val">vivek-6896@ptyes</span>
+                <span id="upi-val" class="upi-id">vivek-6896@ptyes</span>
                 <button id="copy-upi" class="copy-btn"><i class="fa-regular fa-copy"></i></button>
             </div>
         </div>
-
-        <p class="deposit-note">
-            <i class="fa-solid fa-circle-info"></i>
-            After paying, send screenshot to the bot using the button below
-        </p>
-
-        <button id="btn-deposit-confirm" class="btn-main">
-            <i class="fa-solid fa-paper-plane"></i> I've Paid — Send Screenshot
-        </button>
-        <button id="btn-deposit-cancel" class="btn-ghost">Cancel</button>
+        <p class="info-note"><i class="fa-solid fa-circle-info"></i> After paying, tap below — bot will ask for screenshot</p>
+        <button id="btn-dep-ok" class="btn-glow"><i class="fa-solid fa-paper-plane"></i> I've Paid</button>
+        <button id="btn-dep-cancel" class="btn-flat">Cancel</button>
     </div>
 </div>
 
-<!-- ══ PURCHASE SHEET ══ -->
-<div id="purchase-sheet" class="bottom-sheet">
-    <div class="sheet-handle"></div>
-    <div class="sheet-body">
-        <div class="purchase-header">
-            <div id="purchase-icon" class="p-icon">👤</div>
+<!-- BUY SHEET -->
+<div id="buy-sheet" class="sheet">
+    <div class="sheet-pill"></div>
+    <div class="sheet-inner">
+        <div class="bh-row">
+            <div id="bh-icon" class="bh-icon">👤</div>
             <div>
-                <h2 id="sheet-product-name" class="sheet-title" style="margin-bottom:2px">Product</h2>
-                <span id="sheet-price" class="p-price">₹0</span>
+                <div id="bh-name" class="bh-name">Product</div>
+                <div id="bh-price" class="bh-price">₹0</div>
             </div>
         </div>
-
-        <div id="balance-warning" class="balance-warn" style="display:none">
+        <div id="bal-warn" class="bal-warn" style="display:none">
             <i class="fa-solid fa-triangle-exclamation"></i>
-            <span id="balance-warn-text">Insufficient balance. Please deposit first.</span>
+            <span id="bal-warn-txt">Insufficient balance.</span>
         </div>
-
-        <div class="input-wrap" style="margin-bottom: 12px;">
-            <input type="text" id="target-input" placeholder="Enter username or link..." autocomplete="off" autocorrect="off">
+        <div class="field" style="margin-bottom:6px">
+            <input type="text" id="tgt-input" placeholder="Username or link..." style="padding-left:14px" autocomplete="off" autocorrect="off">
         </div>
-        <span id="input-error" class="err-text"></span>
-
-        <div class="balance-row">
+        <div id="tgt-err" class="tgt-err"></div>
+        <div class="bal-strip">
             <span>Your balance</span>
-            <span id="sheet-balance" class="bal-val">₹0</span>
+            <span id="bh-bal" class="bh-bal-num">₹0.00</span>
         </div>
-
-        <button id="btn-buy-confirm" class="btn-main">
-            <i class="fa-solid fa-bolt"></i> Place Order
-        </button>
-        <button id="btn-buy-cancel" class="btn-ghost">Cancel</button>
+        <button id="btn-buy-ok" class="btn-glow"><i class="fa-solid fa-bolt"></i> Place Order</button>
+        <button id="btn-buy-cancel" class="btn-flat">Cancel</button>
     </div>
 </div>
 
-<!-- ══ OVERLAY ══ -->
 <div id="overlay" class="overlay"></div>
-
-<!-- ══ TOAST ══ -->
 <div id="toast" class="toast"></div>
 
-<!-- ══ MAIN APP ══ -->
+<!-- APP -->
 <div id="app">
-
-    <!-- Header -->
-    <header class="header">
-        <div class="avatar-wrap">
-            <div id="avatar-circle" class="avatar">AV</div>
-            <div class="tigertag">
-                <span id="user-name">Tiger User</span>
-                <span class="brand">🐯 Tiger Deals</span>
+    <header class="hdr">
+        <div class="hdr-left">
+            <div id="ava" class="ava">AV</div>
+            <div class="hdr-info">
+                <div id="uname" class="uname">User</div>
+                <div class="ubrand">🐯 Tiger Deals</div>
             </div>
         </div>
-        <button class="icon-btn" id="btn-referral" title="Referral">
-            <i class="fa-solid fa-share-nodes"></i>
-        </button>
+        <button class="hdr-btn" id="btn-ref"><i class="fa-solid fa-share-nodes"></i></button>
     </header>
 
-    <!-- Wallet Card -->
-    <div class="wallet-card">
-        <div class="wallet-glow"></div>
-        <div class="wallet-top">
-            <span class="wallet-label">Wallet Balance</span>
-            <span class="wallet-badge">LIVE</span>
-        </div>
-        <div class="wallet-amount" id="wallet-balance">₹0.00</div>
-        <div class="wallet-bottom">
-            <button id="btn-deposit" class="wallet-btn">
-                <i class="fa-solid fa-plus"></i> Add Funds
-            </button>
-            <button id="btn-history" class="wallet-btn wallet-btn-ghost">
-                <i class="fa-solid fa-clock-rotate-left"></i> History
-            </button>
-        </div>
+    <div class="wcard">
+        <div class="wcard-glow"></div>
+        <div class="wcard-orb"></div>
+        <div class="wcard-wallet-icon"><i class="fa-solid fa-wallet"></i></div>
+        <div class="wlbl">Wallet Balance</div>
+        <div id="wamt" class="wamt">₹0.00</div>
+        <button id="btn-dep" class="wbtn"><i class="fa-solid fa-plus"></i> Add Funds</button>
     </div>
 
-    <!-- Category Tabs -->
     <div class="tabs-wrap">
-        <nav class="tabs">
-            <button class="tab active" data-cat="instagram">
-                <i class="fa-brands fa-instagram"></i>
-                <span>Instagram</span>
-            </button>
-            <button class="tab" data-cat="telegram">
-                <i class="fa-brands fa-telegram"></i>
-                <span>Telegram</span>
-            </button>
-            <button class="tab" data-cat="facebook">
-                <i class="fa-brands fa-facebook-f"></i>
-                <span>Facebook</span>
-            </button>
-        </nav>
+        <button class="tab active" data-cat="instagram"><i class="fa-brands fa-instagram"></i> Instagram</button>
+        <button class="tab" data-cat="telegram"><i class="fa-brands fa-telegram"></i> Telegram</button>
+        <button class="tab" data-cat="facebook"><i class="fa-brands fa-facebook-f"></i> Facebook</button>
     </div>
 
-    <!-- Sub filters -->
-    <div id="sub-filters" class="sub-filters"></div>
+    <div id="subs" class="subs"></div>
 
-    <!-- Section label -->
-    <div class="section-label">
-        <span id="section-title">Instagram Services</span>
-        <span id="section-count" class="count-badge">0 deals</span>
+    <div class="grid-hdr">
+        <span id="gtitle">Instagram Services</span>
+        <span id="gcount" class="gcount">0 deals</span>
     </div>
 
-    <!-- Product Grid -->
-    <main id="product-grid" class="grid"></main>
-
-    <!-- Bottom padding -->
-    <div style="height: 32px"></div>
+    <main id="grid" class="grid"></main>
+    <div style="height:48px"></div>
 </div>
 
 <script src="app.js"></script>
