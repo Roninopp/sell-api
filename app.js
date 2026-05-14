@@ -2,21 +2,32 @@
 const tg = window.Telegram.WebApp;
 tg.expand(); // Expands the web app to full height
 
-// --- NEW: Grab Balance from URL ---
+// Setup User Data & Live Balance in Header
+document.addEventListener("DOMContentLoaded", () => {
+    // 1. Get User Info
+    const user = tg.initDataUnsafe?.user;
+    if (user) {
+        document.getElementById('user-greeting').innerText = `Welcome, ${user.first_name}`;
+        const avatarUrl = `https://ui-avatars.com/api/?name=${user.first_name}&background=f39c12&color=fff`;
+        document.getElementById('user-avatar').src = avatarUrl;
+    }
+
+    // 2. Grab Live Balance from the URL sent by Python
     const urlParams = new URLSearchParams(window.location.search);
     const userBalance = urlParams.get('balance');
     if (userBalance !== null) {
         document.getElementById('wallet-balance').innerText = `₹${userBalance}`;
     }
+});
 
 // --- Product Database (Mirrors your Python dicts) ---
 const products = {
     instagram: [
         { id: "100f", name: "100 Followers", price: 20, type: "profile" },
         { id: "500f", name: "500 Followers", price: 70, type: "profile" },
+        { id: "1000f", name: "1000 Followers", price: 160, type: "profile" },
         { id: "1kv", name: "1,000 Views", price: 17, type: "post" },
         { id: "100l", name: "100 Likes", price: 8, type: "post" }
-        // Note: Add the rest of your products here later!
     ],
     telegram: [
         { id: "100m", name: "100 Members", price: 28, type: "profile" },
@@ -94,7 +105,7 @@ window.openModal = function(id, name, price, type, category) {
         targetInput.placeholder = "https://...";
     } else {
         label.innerText = category === 'instagram' ? "Enter Username" : "Enter Channel Link/Username";
-        targetInput.placeholder = "@username";
+        targetInput.placeholder = "username";
     }
 
     targetInput.value = '';
