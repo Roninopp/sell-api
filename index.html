@@ -3,75 +3,163 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Tiger Deals Store</title>
+    <title>Tiger Deals</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="app">
-        <header class="dashboard">
-            <div class="user-info">
-                <img id="user-avatar" src="https://ui-avatars.com/api/?name=User&background=f39c12&color=fff" alt="Avatar">
-                <div class="user-details">
-                    <span id="user-greeting">Welcome, User</span>
-                    <span class="brand-tag">Tiger Deals</span>
-                </div>
-            </div>
-            
-            <div class="wallet-card">
-                <div class="wallet-left">
-                    <span class="wallet-label">Wallet Balance</span>
-                    <h2 id="wallet-balance">₹0.00</h2>
-                </div>
-                <button id="btn-deposit" class="btn-primary">
-                    <i class="fa-solid fa-wallet"></i> Add Funds
-                </button>
-            </div>
-        </header>
 
-        <nav class="category-tabs">
-            <button class="cat-btn active" data-category="instagram">
-                <i class="fa-brands fa-instagram"></i> Instagram
-            </button>
-            <button class="cat-btn" data-category="telegram">
-                <i class="fa-brands fa-telegram"></i> Telegram
-            </button>
-            <button class="cat-btn" data-category="facebook">
-                <i class="fa-brands fa-facebook"></i> Facebook
-            </button>
-        </nav>
+<!-- ══ DEPOSIT SHEET ══ -->
+<div id="deposit-sheet" class="bottom-sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-body">
+        <h2 class="sheet-title">Add Funds</h2>
+        <p class="sheet-sub">Enter how much you want to deposit</p>
 
-        <div id="sub-category-filters" class="sub-filters">
-            </div>
+        <div class="amount-pills">
+            <button class="pill" data-amount="50">₹50</button>
+            <button class="pill" data-amount="100">₹100</button>
+            <button class="pill" data-amount="200">₹200</button>
+            <button class="pill" data-amount="500">₹500</button>
+        </div>
 
-        <main class="product-grid" id="product-container">
-            <div class="loading-state">
-                <i class="fa-solid fa-spinner fa-spin"></i> Loading deals...
+        <div class="input-wrap">
+            <span class="input-prefix">₹</span>
+            <input type="number" id="deposit-amount" placeholder="Enter amount" min="10" max="10000">
+        </div>
+
+        <div class="upi-box">
+            <span class="upi-label">Pay to UPI ID</span>
+            <div class="upi-row">
+                <span id="upi-id-text" class="upi-val">vivek-6896@ptyes</span>
+                <button id="copy-upi" class="copy-btn"><i class="fa-regular fa-copy"></i></button>
             </div>
-        </main>
+        </div>
+
+        <p class="deposit-note">
+            <i class="fa-solid fa-circle-info"></i>
+            After paying, send screenshot to the bot using the button below
+        </p>
+
+        <button id="btn-deposit-confirm" class="btn-main">
+            <i class="fa-solid fa-paper-plane"></i> I've Paid — Send Screenshot
+        </button>
+        <button id="btn-deposit-cancel" class="btn-ghost">Cancel</button>
     </div>
+</div>
 
-    <div id="purchase-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="modal-title">Confirm Order</h3>
-                <button id="close-modal"><i class="fa-solid fa-times"></i></button>
+<!-- ══ PURCHASE SHEET ══ -->
+<div id="purchase-sheet" class="bottom-sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-body">
+        <div class="purchase-header">
+            <div id="purchase-icon" class="p-icon">👤</div>
+            <div>
+                <h2 id="sheet-product-name" class="sheet-title" style="margin-bottom:2px">Product</h2>
+                <span id="sheet-price" class="p-price">₹0</span>
             </div>
-            <div class="modal-body">
-                <p id="modal-product-name" class="highlight-text">1000 Followers</p>
-                <p class="price-tag">Price: <span id="modal-price">₹160</span></p>
-                
-                <div class="input-group">
-                    <label id="modal-input-label" for="target-link">Target Link / Username</label>
-                    <input type="text" id="target-link" placeholder="Paste link here..." autocomplete="off">
-                    <span id="input-error" class="error-text"></span>
-                </div>
+        </div>
+
+        <div id="balance-warning" class="balance-warn" style="display:none">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <span id="balance-warn-text">Insufficient balance. Please deposit first.</span>
+        </div>
+
+        <div class="input-wrap" style="margin-bottom: 12px;">
+            <input type="text" id="target-input" placeholder="Enter username or link..." autocomplete="off" autocorrect="off">
+        </div>
+        <span id="input-error" class="err-text"></span>
+
+        <div class="balance-row">
+            <span>Your balance</span>
+            <span id="sheet-balance" class="bal-val">₹0</span>
+        </div>
+
+        <button id="btn-buy-confirm" class="btn-main">
+            <i class="fa-solid fa-bolt"></i> Place Order
+        </button>
+        <button id="btn-buy-cancel" class="btn-ghost">Cancel</button>
+    </div>
+</div>
+
+<!-- ══ OVERLAY ══ -->
+<div id="overlay" class="overlay"></div>
+
+<!-- ══ TOAST ══ -->
+<div id="toast" class="toast"></div>
+
+<!-- ══ MAIN APP ══ -->
+<div id="app">
+
+    <!-- Header -->
+    <header class="header">
+        <div class="avatar-wrap">
+            <div id="avatar-circle" class="avatar">AV</div>
+            <div class="tigertag">
+                <span id="user-name">Tiger User</span>
+                <span class="brand">🐯 Tiger Deals</span>
             </div>
-            <button id="btn-confirm-buy" class="btn-primary full-width">Buy Now</button>
+        </div>
+        <button class="icon-btn" id="btn-referral" title="Referral">
+            <i class="fa-solid fa-share-nodes"></i>
+        </button>
+    </header>
+
+    <!-- Wallet Card -->
+    <div class="wallet-card">
+        <div class="wallet-glow"></div>
+        <div class="wallet-top">
+            <span class="wallet-label">Wallet Balance</span>
+            <span class="wallet-badge">LIVE</span>
+        </div>
+        <div class="wallet-amount" id="wallet-balance">₹0.00</div>
+        <div class="wallet-bottom">
+            <button id="btn-deposit" class="wallet-btn">
+                <i class="fa-solid fa-plus"></i> Add Funds
+            </button>
+            <button id="btn-history" class="wallet-btn wallet-btn-ghost">
+                <i class="fa-solid fa-clock-rotate-left"></i> History
+            </button>
         </div>
     </div>
 
-    <script src="app.js"></script>
+    <!-- Category Tabs -->
+    <div class="tabs-wrap">
+        <nav class="tabs">
+            <button class="tab active" data-cat="instagram">
+                <i class="fa-brands fa-instagram"></i>
+                <span>Instagram</span>
+            </button>
+            <button class="tab" data-cat="telegram">
+                <i class="fa-brands fa-telegram"></i>
+                <span>Telegram</span>
+            </button>
+            <button class="tab" data-cat="facebook">
+                <i class="fa-brands fa-facebook-f"></i>
+                <span>Facebook</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- Sub filters -->
+    <div id="sub-filters" class="sub-filters"></div>
+
+    <!-- Section label -->
+    <div class="section-label">
+        <span id="section-title">Instagram Services</span>
+        <span id="section-count" class="count-badge">0 deals</span>
+    </div>
+
+    <!-- Product Grid -->
+    <main id="product-grid" class="grid"></main>
+
+    <!-- Bottom padding -->
+    <div style="height: 32px"></div>
+</div>
+
+<script src="app.js"></script>
 </body>
 </html>
