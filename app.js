@@ -2,17 +2,12 @@
 const tg = window.Telegram.WebApp;
 tg.expand(); // Expands the web app to full height
 
-// Setup User Data in Header
-document.addEventListener("DOMContentLoaded", () => {
-    const user = tg.initDataUnsafe?.user;
-    if (user) {
-        document.getElementById('user-greeting').innerText = `Welcome, ${user.first_name}`;
-        // Note: Telegram doesn't pass the avatar URL directly for privacy, 
-        // but we can generate a nice initial avatar using ui-avatars
-        const avatarUrl = `https://ui-avatars.com/api/?name=${user.first_name}&background=f39c12&color=fff`;
-        document.getElementById('user-avatar').src = avatarUrl;
+// --- NEW: Grab Balance from URL ---
+    const urlParams = new URLSearchParams(window.location.search);
+    const userBalance = urlParams.get('balance');
+    if (userBalance !== null) {
+        document.getElementById('wallet-balance').innerText = `₹${userBalance}`;
     }
-});
 
 // --- Product Database (Mirrors your Python dicts) ---
 const products = {
