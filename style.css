@@ -1,0 +1,314 @@
+:root {
+    /* Native Telegram Variables fallback */
+    --bg-color: var(--tg-theme-bg-color, #18222d);
+    --text-color: var(--tg-theme-text-color, #ffffff);
+    --hint-color: var(--tg-theme-hint-color, #b1c3d5);
+    --link-color: var(--tg-theme-link-color, #6ab2f2);
+    --button-color: var(--tg-theme-button-color, #2ea6ff);
+    --button-text-color: var(--tg-theme-button-text-color, #ffffff);
+    --secondary-bg-color: var(--tg-theme-secondary-bg-color, #131415);
+    
+    /* Tiger Deals Branding */
+    --tiger-orange: #f39c12;
+    --tiger-dark: #e67e22;
+    --card-bg: rgba(255, 255, 255, 0.05);
+    --border-radius: 16px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    /* Prevent text selection */
+    user-select: none; 
+    -webkit-tap-highlight-color: transparent;
+}
+
+#app {
+    padding: 16px;
+    padding-bottom: 40px;
+}
+
+/* Dashboard Header */
+.dashboard {
+    margin-bottom: 24px;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+#user-avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border: 2px solid var(--tiger-orange);
+}
+
+.user-details {
+    display: flex;
+    flex-direction: column;
+}
+
+#user-greeting {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.brand-tag {
+    font-size: 12px;
+    color: var(--tiger-orange);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+/* Wallet Card */
+.wallet-card {
+    background: linear-gradient(135deg, var(--tiger-orange), var(--tiger-dark));
+    border-radius: var(--border-radius);
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(243, 156, 18, 0.3);
+}
+
+.wallet-label {
+    font-size: 13px;
+    opacity: 0.9;
+}
+
+#wallet-balance {
+    font-size: 28px;
+    font-weight: 800;
+    margin-top: 4px;
+}
+
+.btn-primary {
+    background-color: #fff;
+    color: var(--tiger-dark);
+    border: none;
+    padding: 10px 16px;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+.btn-primary:active {
+    transform: scale(0.95);
+}
+
+/* Category Tabs */
+.category-tabs {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+
+.category-tabs::-webkit-scrollbar {
+    display: none;
+}
+
+.cat-btn {
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 12px 20px;
+    border-radius: 20px;
+    font-weight: 600;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cat-btn.active {
+    background-color: var(--button-color);
+    color: var(--button-text-color);
+    border-color: var(--button-color);
+}
+
+/* Sub Filters (e.g. Followers, Likes) */
+.sub-filters {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.sub-btn {
+    background: transparent;
+    color: var(--hint-color);
+    border: none;
+    padding: 6px 12px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 12px;
+}
+
+.sub-btn.active {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--tiger-orange);
+}
+
+/* Product Grid */
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+}
+
+.product-card {
+    background-color: var(--secondary-bg-color);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.product-icon {
+    font-size: 24px;
+    color: var(--tiger-orange);
+    margin-bottom: 12px;
+}
+
+.product-card h4 {
+    font-size: 14px;
+    margin-bottom: 8px;
+    color: var(--text-color);
+}
+
+.product-card .price {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--tiger-orange);
+    margin-bottom: 12px;
+}
+
+.btn-buy-small {
+    background-color: var(--button-color);
+    color: var(--button-text-color);
+    border: none;
+    padding: 8px;
+    border-radius: 8px;
+    font-weight: 600;
+    width: 100%;
+}
+
+.loading-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 40px;
+    color: var(--hint-color);
+}
+
+/* Modal styling */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+}
+
+.modal.active {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+}
+
+.modal-content {
+    background-color: var(--bg-color);
+    width: 100%;
+    border-radius: 24px 24px 0 0;
+    padding: 24px;
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+#close-modal {
+    background: transparent;
+    border: none;
+    color: var(--hint-color);
+    font-size: 20px;
+}
+
+.highlight-text {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.price-tag {
+    color: var(--tiger-orange);
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.input-group {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.input-group label {
+    font-size: 14px;
+    color: var(--hint-color);
+}
+
+.input-group input {
+    background-color: var(--secondary-bg-color);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-color);
+    padding: 14px;
+    border-radius: 12px;
+    font-size: 16px;
+    outline: none;
+}
+
+.input-group input:focus {
+    border-color: var(--tiger-orange);
+}
+
+.error-text {
+    color: #e74c3c;
+    font-size: 12px;
+    display: none;
+}
+
+.full-width {
+    width: 100%;
+    background-color: var(--button-color);
+    color: var(--button-text-color);
+}
