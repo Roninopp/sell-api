@@ -1,291 +1,253 @@
-// Tiger Deals Mini App — Full Logic
-const tg = window.Telegram.WebApp;
-tg.expand();
-tg.enableClosingConfirmation();
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap');
 
-// ── Products ──
-const PRODUCTS = {
-    instagram: [
-        { id:"100f",   name:"100 Followers",  price:20,  type:"profile", icon:"👤", color:"#7b5cfa,#00d4ff" },
-        { id:"500f",   name:"500 Followers",  price:70,  type:"profile", icon:"👤", color:"#7b5cfa,#00d4ff" },
-        { id:"1000f",  name:"1K Followers",   price:160, type:"profile", icon:"👤", color:"#7b5cfa,#00d4ff" },
-        { id:"5kf",    name:"5K Followers",   price:420, type:"profile", icon:"👤", color:"#7b5cfa,#00d4ff" },
-        { id:"1kv",    name:"1K Views",       price:17,  type:"post",    icon:"👁️", color:"#00d4ff,#0077ff" },
-        { id:"100kv",  name:"100K Views",     price:190, type:"post",    icon:"👁️", color:"#00d4ff,#0077ff" },
-        { id:"1mv",    name:"1M Views",       price:300, type:"post",    icon:"👁️", color:"#00d4ff,#0077ff" },
-        { id:"100l",   name:"100 Likes",      price:8,   type:"post",    icon:"❤️", color:"#ff6eb4,#ff3366" },
-        { id:"10kl",   name:"10K Likes",      price:50,  type:"post",    icon:"❤️", color:"#ff6eb4,#ff3366" },
-        { id:"100kl",  name:"100K Likes",     price:70,  type:"post",    icon:"❤️", color:"#ff6eb4,#ff3366" },
-        { id:"1kc",    name:"1K Comments",    price:120, type:"post",    icon:"💬", color:"#00e5a0,#00a86b" },
-    ],
-    telegram: [
-        { id:"100m",   name:"100 Members",    price:25,  type:"profile", icon:"👥", color:"#2ea6ff,#0066cc" },
-        { id:"200m",   name:"200 Members",    price:49,  type:"profile", icon:"👥", color:"#2ea6ff,#0066cc" },
-        { id:"500m",   name:"500 Members",    price:120, type:"profile", icon:"👥", color:"#2ea6ff,#0066cc" },
-        { id:"1000m",  name:"1000 Members",   price:240, type:"profile", icon:"👥", color:"#2ea6ff,#0066cc" },
-        { id:"1ktv",   name:"1K Views",       price:10,  type:"post",    icon:"👁️", color:"#00d4ff,#0077ff" },
-        { id:"100r",   name:"100 Reactions",  price:15,  type:"post",    icon:"⚡", color:"#ffaa00,#ff6600" },
-    ],
-    facebook: [
-        { id:"100fb",  name:"100 Followers",  price:25,  type:"profile", icon:"👤", color:"#4267B2,#1a4a9e" },
-        { id:"200fb",  name:"200 Followers",  price:49,  type:"profile", icon:"👤", color:"#4267B2,#1a4a9e" },
-        { id:"500fb",  name:"500 Followers",  price:120, type:"profile", icon:"👤", color:"#4267B2,#1a4a9e" },
-        { id:"1000fb", name:"1000 Followers", price:240, type:"profile", icon:"👤", color:"#4267B2,#1a4a9e" },
-    ],
-};
-
-const SUBS = {
-    instagram: ["All","Followers","Views","Likes","Comments"],
-    telegram:  ["All","Members","Views","Reactions"],
-    facebook:  ["All","Followers"],
-};
-
-const SUB_KEY = {
-    Followers:"Followers", Views:"Views", Likes:"Likes",
-    Comments:"Comments", Members:"Members", Reactions:"Reactions",
-};
-
-// ── State ──
-let S = { balance:0, cat:"instagram", sub:"All", prod:null, depAmt:0 };
-
-// ── DOM ──
-const $  = id => document.getElementById(id);
-const overlay     = $('overlay');
-const depSheet    = $('deposit-sheet');
-const buySheet    = $('buy-sheet');
-const toastEl     = $('toast');
-const wamt        = $('wamt');
-
-// ── Boot ──
-document.addEventListener("DOMContentLoaded", () => {
-    // Telegram user
-    const user = tg.initDataUnsafe?.user;
-    if (user) {
-        $('uname').textContent = `Welcome, ${user.first_name}`;
-        $('ava').textContent   = user.first_name.slice(0,2).toUpperCase();
-    }
-
-    // Balance from URL param (bot sends it when opening mini app)
-    const p   = new URLSearchParams(window.location.search);
-    const bal = parseFloat(p.get('balance') || '0');
-    S.balance = isNaN(bal) ? 0 : bal;
-    updateWallet();
-
-    renderSubs();
-    renderGrid();
-    bindAll();
-});
-
-// ── Wallet ──
-function updateWallet() {
-    wamt.textContent      = `₹${S.balance.toFixed(2)}`;
-    $('bh-bal').textContent = `₹${S.balance.toFixed(2)}`;
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0; padding: 0;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    font-family: 'Outfit', sans-serif;
 }
 
-// ── Render subs ──
-function renderSubs() {
-    const wrap = $('subs');
-    wrap.innerHTML = '';
-    (SUBS[S.cat] || ['All']).forEach(f => {
-        const b = document.createElement('button');
-        b.className = 'sub-btn' + (f === S.sub ? ' active' : '');
-        b.textContent = f;
-        b.onclick = () => { S.sub = f; renderSubs(); renderGrid(); };
-        wrap.appendChild(b);
-    });
+:root {
+    --bg: #0d0b1e;
+    --glass: rgba(255,255,255,0.06);
+    --glass-b: rgba(255,255,255,0.12);
+    --text: #f0eeff;
+    --muted: rgba(200,190,255,0.5);
+    --purple: #7b5cfa;
+    --purple2: #9b7dff;
+    --cyan: #00d4ff;
+    --green: #00e5a0;
+    --red: #ff5c7a;
+    --r: 18px;
+    --rs: 12px;
 }
 
-// ── Render grid ──
-function renderGrid() {
-    let items = PRODUCTS[S.cat] || [];
-    if (S.sub !== 'All') {
-        const kw = SUB_KEY[S.sub] || S.sub;
-        items = items.filter(p => p.name.includes(kw));
-    }
+html, body { background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+::-webkit-scrollbar { display: none; }
 
-    const labels = { instagram:'Instagram', telegram:'Telegram', facebook:'Facebook' };
-    $('gtitle').textContent = `${labels[S.cat]} Services`;
-    $('gcount').textContent = `${items.length} deals`;
+/* ── BLOBS ── */
+.blob { position: fixed; border-radius: 50%; filter: blur(80px); pointer-events: none; z-index: 0; opacity: 0.45; }
+.b1 { width:320px; height:320px; background:radial-gradient(circle,#6c3de8,transparent 70%); top:-80px; left:-80px; }
+.b2 { width:280px; height:280px; background:radial-gradient(circle,#0099cc,transparent 70%); top:120px; right:-60px; }
+.b3 { width:260px; height:260px; background:radial-gradient(circle,#a020d8,transparent 70%); bottom:100px; left:30px; }
 
-    const grid = $('grid');
-    grid.innerHTML = '';
+/* ── APP ── */
+#app { position:relative; z-index:1; padding:16px; max-width:480px; margin:0 auto; }
 
-    if (!items.length) {
-        grid.innerHTML = `<div class="empty"><i class="fa-solid fa-box-open"></i>No services here yet</div>`;
-        return;
-    }
+/* ── HEADER ── */
+.hdr { display:flex; align-items:center; justify-content:space-between; margin-bottom:22px; }
+.hdr-left { display:flex; align-items:center; gap:12px; }
+.ava {
+    width:46px; height:46px; border-radius:50%;
+    background:linear-gradient(135deg,var(--purple),var(--cyan));
+    display:flex; align-items:center; justify-content:center;
+    font-size:15px; font-weight:800; color:#fff;
+    box-shadow:0 0 18px rgba(123,92,250,0.5); flex-shrink:0;
+}
+.uname { font-size:15px; font-weight:700; color:var(--text); line-height:1.2; }
+.ubrand { font-size:11px; font-weight:600; color:var(--purple2); letter-spacing:0.3px; }
+.hdr-btn {
+    width:40px; height:40px; border-radius:50%;
+    background:var(--glass); border:1px solid var(--glass-b);
+    color:var(--muted); font-size:16px;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; transition:all 0.15s; backdrop-filter:blur(10px);
+}
+.hdr-btn:active { transform:scale(0.9); color:var(--purple2); }
 
-    items.forEach((p, i) => {
-        const [c1, c2] = p.color.split(',');
-        const card = document.createElement('div');
-        card.className = 'pcard';
-        card.style.animationDelay = `${i * 0.05}s`;
-        card.innerHTML = `
-            <div class="pcard-orb" style="background:radial-gradient(circle,${c1}55,transparent 70%)"></div>
-            <div class="pcard-icon">${p.icon}</div>
-            <div class="pcard-name">${p.name}</div>
-            <div class="pcard-price" style="color:${c1}">₹${p.price}</div>
-            <button class="pcard-btn" style="background:${c1}22;border:1px solid ${c1}55;color:${c1}">Select →</button>
-        `;
-        card.onclick = () => openBuySheet(p);
-        grid.appendChild(card);
-    });
+/* ── WALLET CARD ── */
+.wcard {
+    position:relative;
+    background:linear-gradient(135deg,#3d2b8e 0%,#1a3a6e 50%,#0f6f8a 100%);
+    border-radius:24px; padding:22px 22px 20px;
+    margin-bottom:22px; overflow:hidden;
+    box-shadow:0 8px 32px rgba(100,60,200,0.35),inset 0 1px 0 rgba(255,255,255,0.15);
+}
+.wcard-glow {
+    position:absolute; top:-60px; right:-60px;
+    width:220px; height:220px;
+    background:radial-gradient(circle,rgba(0,212,255,0.25) 0%,transparent 65%);
+    pointer-events:none;
+}
+.wcard-orb {
+    position:absolute; bottom:-40px; left:40%;
+    width:150px; height:150px;
+    background:radial-gradient(circle,rgba(160,60,240,0.2) 0%,transparent 70%);
+    pointer-events:none;
+}
+.wcard-wallet-icon {
+    position:absolute; right:22px; top:50%;
+    transform:translateY(-60%);
+    font-size:72px; opacity:0.18; color:#fff;
+    pointer-events:none;
+    filter:drop-shadow(0 0 12px rgba(0,212,255,0.4));
+}
+.wlbl { font-size:13px; font-weight:600; color:rgba(255,255,255,0.7); text-transform:uppercase; letter-spacing:0.8px; margin-bottom:6px; }
+.wamt { font-size:42px; font-weight:900; color:#fff; letter-spacing:-1.5px; line-height:1; margin-bottom:20px; text-shadow:0 2px 16px rgba(0,212,255,0.3); }
+.wbtn {
+    display:inline-flex; align-items:center; gap:8px;
+    padding:12px 24px; border-radius:40px; border:none;
+    background:rgba(255,255,255,0.18); backdrop-filter:blur(10px);
+    color:#fff; font-size:14px; font-weight:700; cursor:pointer;
+    transition:all 0.2s;
+    box-shadow:0 4px 14px rgba(0,0,0,0.2),inset 0 1px 0 rgba(255,255,255,0.2);
+}
+.wbtn:active { transform:scale(0.96); background:rgba(255,255,255,0.25); }
+
+/* ── TABS ── */
+.tabs-wrap { display:flex; gap:8px; overflow-x:auto; margin-bottom:14px; padding-bottom:2px; }
+.tab {
+    display:flex; align-items:center; gap:6px;
+    padding:9px 18px; border-radius:24px;
+    border:1px solid var(--glass-b); background:var(--glass);
+    backdrop-filter:blur(10px); color:var(--muted);
+    font-size:13px; font-weight:600; white-space:nowrap;
+    cursor:pointer; transition:all 0.2s; flex-shrink:0;
+}
+.tab i { font-size:14px; }
+.tab.active {
+    background:linear-gradient(135deg,var(--purple),var(--purple2));
+    border-color:var(--purple); color:#fff;
+    box-shadow:0 4px 16px rgba(123,92,250,0.4);
 }
 
-// ── Sheets ──
-function openSheet(el) {
-    overlay.classList.add('on');
-    el.classList.add('open');
-    tg.BackButton.show();
-    tg.BackButton.onClick(closeAll);
+/* ── SUB FILTERS ── */
+.subs { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px; }
+.sub-btn {
+    padding:5px 14px; border-radius:20px;
+    border:1px solid var(--glass-b); background:transparent;
+    color:var(--muted); font-size:12px; font-weight:600; cursor:pointer; transition:all 0.15s;
+}
+.sub-btn.active { background:rgba(123,92,250,0.15); border-color:var(--purple); color:var(--purple2); }
+
+/* ── GRID HEADER ── */
+.grid-hdr { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+#gtitle { font-size:17px; font-weight:800; }
+.gcount { font-size:11px; color:var(--muted); background:var(--glass); padding:3px 10px; border-radius:10px; border:1px solid var(--glass-b); }
+
+/* ── PRODUCT GRID ── */
+.grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.pcard {
+    background:var(--glass); border:1px solid var(--glass-b);
+    border-radius:var(--r); padding:16px;
+    display:flex; flex-direction:column; gap:8px;
+    cursor:pointer; transition:all 0.2s;
+    backdrop-filter:blur(10px); position:relative; overflow:hidden;
+}
+.pcard:active { transform:scale(0.96); border-color:var(--purple); box-shadow:0 0 20px rgba(123,92,250,0.25); }
+.pcard-orb { position:absolute; width:80px; height:80px; border-radius:50%; top:-20px; right:-20px; pointer-events:none; opacity:0.6; }
+.pcard-icon { font-size:26px; position:relative; z-index:1; }
+.pcard-name { font-size:13px; font-weight:600; color:var(--text); line-height:1.3; position:relative; z-index:1; }
+.pcard-price { font-size:20px; font-weight:900; position:relative; z-index:1; }
+.pcard-btn { margin-top:4px; padding:9px; border-radius:var(--rs); border:none; font-size:12px; font-weight:700; cursor:pointer; transition:all 0.15s; position:relative; z-index:1; }
+.empty { grid-column:1/-1; text-align:center; padding:48px 16px; color:var(--muted); font-size:14px; }
+.empty i { font-size:36px; margin-bottom:12px; display:block; }
+
+/* ── OVERLAY ── */
+.overlay { display:none; position:fixed; inset:0; background:rgba(5,3,20,0.75); backdrop-filter:blur(6px); z-index:100; }
+.overlay.on { display:block; }
+
+/* ── SHEETS ── */
+.sheet {
+    position:fixed; bottom:0; left:0; right:0;
+    background:linear-gradient(180deg,#1a1535 0%,#100d25 100%);
+    border:1px solid var(--glass-b); border-bottom:none;
+    border-radius:28px 28px 0 0;
+    z-index:200; transform:translateY(100%);
+    transition:transform 0.35s cubic-bezier(0.32,0.72,0,1);
+    max-width:480px; margin:0 auto;
+    max-height:92vh; overflow-y:auto;
+}
+.sheet.open { transform:translateY(0); }
+.sheet-pill { width:40px; height:4px; background:rgba(255,255,255,0.15); border-radius:2px; margin:14px auto 0; }
+.sheet-inner { padding:20px 20px 40px; }
+
+.sh-title { font-size:22px; font-weight:800; margin-bottom:4px; }
+.sh-sub { font-size:13px; color:var(--muted); margin-bottom:18px; }
+
+/* Pills */
+.pills { display:flex; gap:8px; margin-bottom:14px; }
+.pill { flex:1; padding:10px 0; border-radius:var(--rs); border:1px solid var(--glass-b); background:var(--glass); color:var(--text); font-size:13px; font-weight:700; cursor:pointer; transition:all 0.15s; }
+.pill.on { background:linear-gradient(135deg,var(--purple),var(--purple2)); border-color:var(--purple); color:#fff; box-shadow:0 4px 12px rgba(123,92,250,0.35); }
+
+/* Field */
+.field { position:relative; margin-bottom:14px; }
+.f-prefix { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--muted); font-size:18px; font-weight:700; pointer-events:none; }
+.field input {
+    width:100%; background:rgba(255,255,255,0.06);
+    border:1px solid var(--glass-b); color:var(--text);
+    padding:14px 14px 14px 36px; border-radius:var(--rs);
+    font-size:15px; font-weight:500; outline:none;
+    transition:border-color 0.15s;
+    -webkit-user-select:text; user-select:text;
+}
+.field input::placeholder { color:var(--muted); }
+.field input:focus { border-color:var(--purple); }
+
+/* UPI */
+.upi-card { background:rgba(123,92,250,0.1); border:1px solid rgba(123,92,250,0.25); border-radius:var(--rs); padding:14px; margin-bottom:14px; }
+.upi-lbl { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.7px; color:var(--muted); display:block; margin-bottom:6px; }
+.upi-row { display:flex; align-items:center; justify-content:space-between; }
+.upi-id { font-size:15px; font-weight:800; color:var(--purple2); }
+.copy-btn { width:34px; height:34px; background:rgba(123,92,250,0.2); border:1px solid rgba(123,92,250,0.3); color:var(--purple2); border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:14px; cursor:pointer; transition:all 0.15s; }
+.copy-btn:active { background:var(--purple); color:#fff; transform:scale(0.9); }
+
+/* ── IMAGE UPLOAD ── */
+.upload-wrap { margin-bottom:14px; }
+.upload-btn {
+    width:100%; padding:14px;
+    border-radius:var(--rs);
+    border:2px dashed rgba(123,92,250,0.35);
+    background:rgba(123,92,250,0.07);
+    color:var(--purple2);
+    font-size:14px; font-weight:600;
+    cursor:pointer; transition:all 0.2s;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+}
+.upload-btn:active { background:rgba(123,92,250,0.15); border-color:var(--purple); }
+.img-preview {
+    width:100%; border-radius:var(--rs);
+    margin-top:10px; object-fit:cover;
+    max-height:180px;
+    border:1px solid rgba(123,92,250,0.3);
 }
 
-function closeAll() {
-    overlay.classList.remove('on');
-    depSheet.classList.remove('open');
-    buySheet.classList.remove('open');
-    tg.BackButton.hide();
-    S.prod = null;
+/* Note */
+.info-note { font-size:12px; color:var(--muted); display:flex; align-items:flex-start; gap:6px; margin-bottom:18px; line-height:1.5; }
+.info-note i { color:var(--cyan); margin-top:2px; flex-shrink:0; }
+
+/* Buy header */
+.bh-row { display:flex; align-items:center; gap:14px; margin-bottom:18px; }
+.bh-icon { font-size:30px; width:54px; height:54px; border-radius:16px; background:rgba(123,92,250,0.1); border:1px solid rgba(123,92,250,0.2); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.bh-name { font-size:18px; font-weight:800; line-height:1.2; margin-bottom:4px; }
+.bh-price { font-size:20px; font-weight:900; color:var(--cyan); }
+
+/* Balance warning */
+.bal-warn { background:rgba(255,92,122,0.1); border:1px solid rgba(255,92,122,0.25); border-radius:var(--rs); padding:10px 14px; font-size:13px; color:var(--red); display:flex; align-items:flex-start; gap:8px; margin-bottom:14px; line-height:1.5; }
+.tgt-err { font-size:12px; color:var(--red); margin-bottom:10px; min-height:0; }
+
+/* Balance strip */
+.bal-strip { display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-top:1px solid var(--glass-b); border-bottom:1px solid var(--glass-b); margin-bottom:16px; font-size:13px; color:var(--muted); }
+.bh-bal-num { font-size:17px; font-weight:800; color:var(--green); }
+
+/* Buttons */
+.btn-glow {
+    width:100%; padding:15px; border-radius:var(--rs); border:none;
+    background:linear-gradient(135deg,var(--purple),#5b8df5);
+    color:#fff; font-size:15px; font-weight:800; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    box-shadow:0 8px 24px rgba(123,92,250,0.4);
+    transition:all 0.15s; margin-bottom:10px; letter-spacing:0.2px;
 }
+.btn-glow:active { transform:scale(0.97); box-shadow:0 4px 12px rgba(123,92,250,0.3); }
+.btn-glow:disabled { background:rgba(255,255,255,0.1); color:var(--muted); box-shadow:none; cursor:not-allowed; }
+.btn-flat { width:100%; padding:13px; border-radius:var(--rs); border:1px solid var(--glass-b); background:transparent; color:var(--muted); font-size:14px; font-weight:600; cursor:pointer; transition:all 0.15s; }
+.btn-flat:active { background:var(--glass); }
 
-overlay.onclick = closeAll;
-
-// Deposit
-function openDepSheet() {
-    $('dep-amount').value = '';
-    S.depAmt = 0;
-    document.querySelectorAll('.pill').forEach(p => p.classList.remove('on'));
-    openSheet(depSheet);
-}
-
-// Buy
-function openBuySheet(prod) {
-    S.prod = prod;
-    $('bh-icon').textContent  = prod.icon;
-    $('bh-name').textContent  = prod.name;
-    $('bh-price').textContent = `₹${prod.price}`;
-    $('tgt-input').value      = '';
-    $('tgt-err').textContent  = '';
-
-    // Placeholder
-    let ph = 'Enter username...';
-    if (prod.type === 'post') {
-        ph = S.cat === 'instagram' ? 'Paste Post/Reel link (https://...)' : 'Paste public message link';
-    } else {
-        if (S.cat === 'instagram') ph = 'Instagram username (without @)';
-        if (S.cat === 'telegram')  ph = '@channel or t.me/channel';
-        if (S.cat === 'facebook')  ph = 'Facebook profile/page link';
-    }
-    $('tgt-input').placeholder = ph;
-
-    // Balance check
-    const warn   = $('bal-warn');
-    const buyBtn = $('btn-buy-ok');
-    if (S.balance < prod.price) {
-        warn.style.display = 'flex';
-        $('bal-warn-txt').textContent =
-            `You need ₹${prod.price} but have ₹${S.balance.toFixed(2)}. Please add funds first.`;
-        buyBtn.disabled = true;
-    } else {
-        warn.style.display = 'none';
-        buyBtn.disabled = false;
-    }
-
-    updateWallet();
-    openSheet(buySheet);
-}
-
-// ── Bind all events ──
-function bindAll() {
-    // Tabs
-    document.querySelectorAll('.tab').forEach(t => {
-        t.onclick = () => {
-            document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
-            t.classList.add('active');
-            S.cat = t.dataset.cat;
-            S.sub = 'All';
-            renderSubs();
-            renderGrid();
-        };
-    });
-
-    // Deposit open
-    $('btn-dep').onclick = openDepSheet;
-
-    // Amount pills
-    document.querySelectorAll('.pill').forEach(pill => {
-        pill.onclick = () => {
-            document.querySelectorAll('.pill').forEach(p => p.classList.remove('on'));
-            pill.classList.add('on');
-            const amt = parseInt(pill.dataset.amount);
-            $('dep-amount').value = amt;
-            S.depAmt = amt;
-        };
-    });
-
-    $('dep-amount').addEventListener('input', e => {
-        S.depAmt = parseInt(e.target.value) || 0;
-        document.querySelectorAll('.pill').forEach(p => {
-            p.classList.toggle('on', parseInt(p.dataset.amount) === S.depAmt);
-        });
-    });
-
-    // Copy UPI
-    $('copy-upi').onclick = () => {
-        const val = $('upi-val').textContent;
-        navigator.clipboard.writeText(val)
-            .then(() => showToast('UPI ID copied! ✓', 'ok'))
-            .catch(() => showToast(val, 'info'));
-    };
-
-    // Deposit confirm
-    $('btn-dep-ok').onclick = () => {
-        const amt = S.depAmt;
-        if (!amt || amt < 10) { showToast('Minimum deposit is ₹10', 'err'); return; }
-        if (amt > 10000)      { showToast('Maximum deposit is ₹10,000', 'err'); return; }
-        tg.sendData(JSON.stringify({ action:"deposit_request", amount:amt }));
-    };
-    $('btn-dep-cancel').onclick = closeAll;
-
-    // Buy confirm
-    $('btn-buy-ok').onclick = () => {
-        const target = $('tgt-input').value.trim();
-        const errEl  = $('tgt-err');
-        errEl.textContent = '';
-
-        if (!target || target.length < 2) {
-            errEl.textContent = '⚠️ Please enter a valid username or link.';
-            return;
-        }
-        if (S.prod.type === 'post' && !target.startsWith('http')) {
-            errEl.textContent = '⚠️ Please paste a full link starting with https://';
-            return;
-        }
-        if (S.balance < S.prod.price) {
-            showToast('Insufficient balance! Add funds first.', 'err');
-            return;
-        }
-
-        tg.sendData(JSON.stringify({
-            action:       "purchase",
-            product_id:   S.prod.id,
-            product_name: S.prod.name,
-            price:        S.prod.price,
-            category:     S.cat,
-            target:       target,
-        }));
-    };
-    $('btn-buy-cancel').onclick = closeAll;
-
-    // Referral
-    $('btn-ref').onclick = () => tg.sendData(JSON.stringify({ action:"get_referral" }));
-}
-
-// ── Toast ──
-let toastT;
-function showToast(msg, type = 'info') {
-    toastEl.textContent = msg;
-    toastEl.className   = `toast ${type} show`;
-    clearTimeout(toastT);
-    toastT = setTimeout(() => toastEl.classList.remove('show'), 2800);
-}
+/* ── TOAST ── */
+.toast { position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(90px); background:rgba(26,21,53,0.95); border:1px solid var(--glass-b); color:var(--text); padding:11px 22px; border-radius:40px; font-size:13px; font-weight:600; backdrop-filter:blur(12px); z-index:999; transition:transform 0.3s cubic-bezier(0.32,0.72,0,1); white-space:nowrap; pointer-events:none; box-shadow:0 8px 28px rgba(0,0,0,0.5); }
+.toast.show { transform:translateX(-50%) translateY(0); }
+.toast.ok   { border-color:var(--green); color:var(--green); }
+.toast.err  { border-color:var(--red);   color:var(--red); }
+.toast.info { border-color:var(--purple2); color:var(--purple2); }
