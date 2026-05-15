@@ -16,36 +16,53 @@
 <div class="blob b2"></div>
 <div class="blob b3"></div>
 
-<!-- DEPOSIT SHEET -->
-<div id="deposit-sheet" class="sheet">
+<!-- ══ DEPOSIT SHEET ══ -->
+<div id="dep-sheet" class="sheet">
     <div class="sheet-pill"></div>
     <div class="sheet-inner">
-        <h2 class="sh-title">Add Funds</h2>
-        <p class="sh-sub">Pay via UPI and send screenshot to bot</p>
+        <h2 class="sh-title">💳 Add Funds</h2>
+        <p class="sh-sub">Pay via UPI then upload your screenshot</p>
+
         <div class="pills">
             <button class="pill" data-amount="50">₹50</button>
             <button class="pill" data-amount="100">₹100</button>
             <button class="pill" data-amount="200">₹200</button>
             <button class="pill" data-amount="500">₹500</button>
         </div>
+
         <div class="field">
             <span class="f-prefix">₹</span>
-            <input type="number" id="dep-amount" placeholder="Enter amount" min="10">
+            <input type="number" id="dep-amount" placeholder="Enter custom amount" min="10">
         </div>
+
         <div class="upi-card">
-            <span class="upi-lbl">UPI ID</span>
+            <span class="upi-lbl">Pay to UPI ID</span>
             <div class="upi-row">
                 <span id="upi-val" class="upi-id">vivek-6896@ptyes</span>
                 <button id="copy-upi" class="copy-btn"><i class="fa-regular fa-copy"></i></button>
             </div>
         </div>
-        <p class="info-note"><i class="fa-solid fa-circle-info"></i> After paying, tap below — bot will ask for screenshot</p>
-        <button id="btn-dep-ok" class="btn-glow"><i class="fa-solid fa-paper-plane"></i> I've Paid</button>
+
+        <!-- Image Upload -->
+        <div class="upload-wrap">
+            <input type="file" id="img-file-input" accept="image/*" style="display:none">
+            <button class="upload-btn" onclick="document.getElementById('img-file-input').click()">
+                <i class="fa-solid fa-camera"></i>
+                <span id="img-upload-label">📷 Upload Payment Screenshot</span>
+            </button>
+            <img id="img-preview" class="img-preview" src="" alt="Preview" style="display:none">
+        </div>
+
+        <p class="info-note"><i class="fa-solid fa-circle-info"></i> Screenshot will be sent to admin for verification</p>
+
+        <button id="btn-dep-ok" class="btn-glow">
+            <i class="fa-solid fa-paper-plane"></i> Submit Deposit
+        </button>
         <button id="btn-dep-cancel" class="btn-flat">Cancel</button>
     </div>
 </div>
 
-<!-- BUY SHEET -->
+<!-- ══ BUY SHEET ══ -->
 <div id="buy-sheet" class="sheet">
     <div class="sheet-pill"></div>
     <div class="sheet-inner">
@@ -56,19 +73,26 @@
                 <div id="bh-price" class="bh-price">₹0</div>
             </div>
         </div>
+
         <div id="bal-warn" class="bal-warn" style="display:none">
             <i class="fa-solid fa-triangle-exclamation"></i>
             <span id="bal-warn-txt">Insufficient balance.</span>
         </div>
+
         <div class="field" style="margin-bottom:6px">
-            <input type="text" id="tgt-input" placeholder="Username or link..." style="padding-left:14px" autocomplete="off" autocorrect="off">
+            <input type="text" id="tgt-input" placeholder="Username or link..."
+                   style="padding-left:14px" autocomplete="off" autocorrect="off">
         </div>
         <div id="tgt-err" class="tgt-err"></div>
+
         <div class="bal-strip">
             <span>Your balance</span>
             <span id="bh-bal" class="bh-bal-num">₹0.00</span>
         </div>
-        <button id="btn-buy-ok" class="btn-glow"><i class="fa-solid fa-bolt"></i> Place Order</button>
+
+        <button id="btn-buy-ok" class="btn-glow">
+            <i class="fa-solid fa-bolt"></i> Place Order
+        </button>
         <button id="btn-buy-cancel" class="btn-flat">Cancel</button>
     </div>
 </div>
@@ -76,7 +100,7 @@
 <div id="overlay" class="overlay"></div>
 <div id="toast" class="toast"></div>
 
-<!-- APP -->
+<!-- ══ MAIN APP ══ -->
 <div id="app">
     <header class="hdr">
         <div class="hdr-left">
@@ -86,7 +110,9 @@
                 <div class="ubrand">🐯 Tiger Deals</div>
             </div>
         </div>
-        <button class="hdr-btn" id="btn-ref"><i class="fa-solid fa-share-nodes"></i></button>
+        <button class="hdr-btn" id="btn-ref" title="Referral">
+            <i class="fa-solid fa-share-nodes"></i>
+        </button>
     </header>
 
     <div class="wcard">
@@ -95,13 +121,21 @@
         <div class="wcard-wallet-icon"><i class="fa-solid fa-wallet"></i></div>
         <div class="wlbl">Wallet Balance</div>
         <div id="wamt" class="wamt">₹0.00</div>
-        <button id="btn-dep" class="wbtn"><i class="fa-solid fa-plus"></i> Add Funds</button>
+        <button id="btn-dep" class="wbtn">
+            <i class="fa-solid fa-plus"></i> Add Funds
+        </button>
     </div>
 
     <div class="tabs-wrap">
-        <button class="tab active" data-cat="instagram"><i class="fa-brands fa-instagram"></i> Instagram</button>
-        <button class="tab" data-cat="telegram"><i class="fa-brands fa-telegram"></i> Telegram</button>
-        <button class="tab" data-cat="facebook"><i class="fa-brands fa-facebook-f"></i> Facebook</button>
+        <button class="tab active" data-cat="instagram">
+            <i class="fa-brands fa-instagram"></i> Instagram
+        </button>
+        <button class="tab" data-cat="telegram">
+            <i class="fa-brands fa-telegram"></i> Telegram
+        </button>
+        <button class="tab" data-cat="facebook">
+            <i class="fa-brands fa-facebook-f"></i> Facebook
+        </button>
     </div>
 
     <div id="subs" class="subs"></div>
