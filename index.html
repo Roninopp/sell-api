@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Tiger Deals</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -39,25 +36,21 @@
             <span class="upi-lbl">Pay to UPI ID</span>
             <div class="upi-row">
                 <span id="upi-val" class="upi-id">vivek-6896@ptyes</span>
-                <button id="copy-upi" class="copy-btn"><i class="fa-regular fa-copy"></i></button>
+                <button id="copy-upi" class="copy-btn">📋</button>
             </div>
         </div>
 
-        <!-- Image Upload -->
         <div class="upload-wrap">
             <input type="file" id="img-file-input" accept="image/*" style="display:none">
             <button class="upload-btn" onclick="document.getElementById('img-file-input').click()">
-                <i class="fa-solid fa-camera"></i>
                 <span id="img-upload-label">📷 Upload Payment Screenshot</span>
             </button>
             <img id="img-preview" class="img-preview" src="" alt="Preview" style="display:none">
         </div>
 
-        <p class="info-note"><i class="fa-solid fa-circle-info"></i> Screenshot will be sent to admin for verification</p>
+        <p class="info-note">ℹ️ Screenshot will be sent to admin for verification</p>
 
-        <button id="btn-dep-ok" class="btn-glow">
-            <i class="fa-solid fa-paper-plane"></i> Submit Deposit
-        </button>
+        <button id="btn-dep-ok" class="btn-glow">✈️ Submit Deposit</button>
         <button id="btn-dep-cancel" class="btn-flat">Cancel</button>
     </div>
 </div>
@@ -75,8 +68,7 @@
         </div>
 
         <div id="bal-warn" class="bal-warn" style="display:none">
-            <i class="fa-solid fa-triangle-exclamation"></i>
-            <span id="bal-warn-txt">Insufficient balance.</span>
+            ⚠️ <span id="bal-warn-txt">Insufficient balance.</span>
         </div>
 
         <div class="field" style="margin-bottom:6px">
@@ -90,9 +82,7 @@
             <span id="bh-bal" class="bh-bal-num">₹0.00</span>
         </div>
 
-        <button id="btn-buy-ok" class="btn-glow">
-            <i class="fa-solid fa-bolt"></i> Place Order
-        </button>
+        <button id="btn-buy-ok" class="btn-glow">⚡ Place Order</button>
         <button id="btn-buy-cancel" class="btn-flat">Cancel</button>
     </div>
 </div>
@@ -106,36 +96,26 @@
         <div class="hdr-left">
             <div id="ava" class="ava">AV</div>
             <div class="hdr-info">
-                <div id="uname" class="uname">User</div>
+                <div id="uname" class="uname">Loading...</div>
                 <div class="ubrand">🐯 Tiger Deals</div>
             </div>
         </div>
-        <button class="hdr-btn" id="btn-ref" title="Referral">
-            <i class="fa-solid fa-share-nodes"></i>
-        </button>
+        <button class="hdr-btn" id="btn-ref" title="Referral">🔗</button>
     </header>
 
     <div class="wcard">
         <div class="wcard-glow"></div>
         <div class="wcard-orb"></div>
-        <div class="wcard-wallet-icon"><i class="fa-solid fa-wallet"></i></div>
+        <div class="wcard-wallet-icon">👛</div>
         <div class="wlbl">Wallet Balance</div>
         <div id="wamt" class="wamt">₹0.00</div>
-        <button id="btn-dep" class="wbtn">
-            <i class="fa-solid fa-plus"></i> Add Funds
-        </button>
+        <button id="btn-dep" class="wbtn">＋ Add Funds</button>
     </div>
 
     <div class="tabs-wrap">
-        <button class="tab active" data-cat="instagram">
-            <i class="fa-brands fa-instagram"></i> Instagram
-        </button>
-        <button class="tab" data-cat="telegram">
-            <i class="fa-brands fa-telegram"></i> Telegram
-        </button>
-        <button class="tab" data-cat="facebook">
-            <i class="fa-brands fa-facebook-f"></i> Facebook
-        </button>
+        <button class="tab active" data-cat="instagram">📷 Instagram</button>
+        <button class="tab" data-cat="telegram">✈️ Telegram</button>
+        <button class="tab" data-cat="facebook">📘 Facebook</button>
     </div>
 
     <div id="subs" class="subs"></div>
